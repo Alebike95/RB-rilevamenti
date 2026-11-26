@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#111418">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>RB Rilevamenti</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="vendor/leaflet.css">
+<link rel="stylesheet" href="css/app.css?v=1.1.5">
+</head>
+<body>
+<header id="top">
+  <div class="brand">RB</div>
+  <div class="seg" id="modeSeg">
+    <button data-mode="rally">Rally</button>
+    <button data-mode="reg">Reg.</button>
+    <button data-mode="evento">Evento</button>
+  </div>
+  <button id="gpsChip" class="chip" title="Sorgente GPS">
+    <span class="dot"></span><span id="gpsTxt">GPS…</span><span id="chipClock" class="clk">--:--:--</span>
+  </button>
+  <div id="clock" class="clock clk">--:--:--</div>
+  <button id="tripBox" class="trip" data-trip="A" title="Trip A: tocca per azzerare o impostare">
+    <i>A</i><span id="tripVal">0.00</span>
+  </button>
+  <button id="tripBoxB" class="trip" data-trip="B" title="Trip B: tocca per azzerare o impostare">
+    <i>B</i><span id="tripValB">0.00</span>
+  </button>
+  <div class="speed"><span id="spdVal">–</span><small>km/h</small></div>
+  <button id="recBtn" class="rec on" title="Registrazione traccia">● REC</button>
+  <div class="spacer"></div>
+  <div class="brk"></div>
+  <button id="tableBtn" class="icon-btn" title="Tabella">▤</button>
+  <button id="exportBtn" class="icon-btn" title="Esporta">⇩</button>
+  <button id="settingsBtn" class="icon-btn" title="Impostazioni">⚙</button>
+</header>
+
+<main id="main">
+  <div id="mapWrap">
+    <div id="map"></div>
+    <div id="evBanner" class="hidden"></div>
+    <div id="fabsL">
+      <button id="voiceBtn" class="fab voice" title="Nota vocale (tocca per iniziare e per finire)">🎙</button>
+      <button id="signalBtn" class="fab signal" title="Segnalazione (traffico, sosta, polizia, meteo…)"><span>SEGNALA</span><small id="signalBadge"></small></button>
+    </div>
+    <div id="fabs">
+      <button id="teleBtn" class="fab small tele-btn" title="Telemetria: rivedi il percorso">📈</button>
+      <button id="followBtn" class="fab small on" title="Segui posizione">◎</button>
+      <button id="photoBtn" class="fab photo" title="Foto">📷</button>
+      <button id="captureBtn" class="fab capture" title="Rileva punto (anche tasto remoto)">
+        <span>PUNTO</span><small id="queueBadge"></small>
+      </button>
+    </div>
+  </div>
+  <section id="panel" class="hidden">
+    <div class="panel-head">
+      <div class="grip" id="panelGrip"></div>
+      <div class="seg" id="tabSeg"><button data-tab="pt" class="on">Punti</button><button data-tab="tr">Passaggi</button><button data-tab="ev">Segnalaz.</button><button data-tab="vo">🎙</button></div>
+      <span id="countTxt" class="muted small"></span>
+      <div class="spacer"></div>
+      <label class="muted small" id="filterBox"><input type="checkbox" id="filterPending"> da classificare</label>
+      <button id="mergeAll" class="hidden small">＋ Unisci tutti ai punti</button>
+      <button class="icon-btn" id="panelClose">✕</button>
+    </div>
+    <div class="table-wrap" id="tableWrap">
+      <table id="ptTable">
+        <thead><tr>
+          <th>N</th><th>Ora</th><th></th><th>Tipo</th><th>Descrizione</th><th>Trip A</th><th>Trip B</th><th>Km ril.</th><th>Note</th><th>📷</th><th></th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="table-wrap hidden" id="vWrap">
+      <table id="vTable">
+        <thead><tr><th>N</th><th>Ora</th><th>Durata</th><th>Punto</th><th>Trip A</th><th>Testo</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="table-wrap hidden" id="evWrap">
+      <table id="evTable">
+        <thead><tr>
+          <th>N</th><th></th><th>Tipo</th><th>Inizio</th><th>Fine</th><th>Durata</th><th>Trip A</th><th>km</th><th>Note</th><th></th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="table-wrap hidden" id="trWrap">
+      <table id="trTable">
+        <thead><tr>
+          <th>N</th><th>Ora</th><th>Punto</th><th>Cartella</th><th>Dist.</th><th>Trip A</th><th>Trip B</th><th>Δ prec.</th><th></th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<div id="modal" class="modal hidden"><div class="sheet" id="sheet"></div></div>
+<div id="viewer" class="viewer hidden"><img id="viewerImg" alt=""><div id="viewerCap"></div></div>
+<input type="file" id="photoInput" accept="image/*" capture="environment" hidden>
+
+<script>window.RB_VERSION = "1.1.5";</script>
+<script src="vendor/leaflet.js"></script>
+<script src="vendor/jszip.min.js"></script>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="vendor/togeojson.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
